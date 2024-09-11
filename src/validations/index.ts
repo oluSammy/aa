@@ -20,3 +20,21 @@ export const loginSchema = (loginData: Record<string, string>) => {
   return schema.validate(loginData);
 };
 
+export const walletPinSchema = (data: Record<string, string>) => {
+  const schema = Joi.object({
+    pin: Joi.string().length(4).pattern(/^[0-9]+$/).messages({'string.pattern.base': `pin must have 4 digits.`}).required()
+  });
+
+  return schema.validate(data);
+};
+
+export const fundWalletSchema = (data: Record<string, string>) => {
+  const schema = Joi.object({
+    pin: Joi.string().length(4).pattern(/^[0-9]+$/).messages({'string.pattern.base': `pin must have 4 digits.`}).required(),
+    amount: Joi.number().min(1).required(),
+  });
+
+  return schema.validate(data);
+};
+
+

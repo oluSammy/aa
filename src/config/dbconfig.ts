@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { User } from "../models/user";
+import { Wallet } from "../models/wallet";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const dbConnection = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User],
+  entities: [User, Wallet],
   migrations: ["src/migrations/*.ts"],
   namingStrategy: new SnakeNamingStrategy(),
   port: +process.env.DB_PORT || 3306,
