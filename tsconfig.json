@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "module": "commonjs",
+        "target": "es2021",
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "composite": true,
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "outDir": "./dist"
+    },
+    "exclude": [
+        "./dist/**/*",
+        "./src/tests/**/*",
+    ]
+}
