@@ -13,7 +13,7 @@ const dbConnection = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Wallet],
+  entities: [User, Wallet, Donation],
   migrations: ["src/migrations/*.ts"],
   namingStrategy: new SnakeNamingStrategy(),
   port: +process.env.DB_PORT || 3306,

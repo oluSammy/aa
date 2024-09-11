@@ -1,4 +1,4 @@
-import { IsNull } from "typeorm";
+import { Between, IsNull } from "typeorm";
 import { getDatabaseConnection } from "../../config/dbconfig";
 import { User } from "../../models/user";
 import { Wallet } from "../../models/wallet";
@@ -126,12 +126,21 @@ export class DatabaseService {
 
     async getDonationsByWalletId(walletId: number) {
         const dataSource = await getDatabaseConnection();
-        // return await dataSource.query(`SELECT * FROM donation WHERE from_wallet = ${walletId}`);
         return await dataSource.getRepository(Donation).find({
             where: {
                 fromWallet: walletId,
             },
         })
+    }
+
+    async getAllDonations(from: string, to: string) {
+        const dataSource = await getDatabaseConnection();
+        return await dataSource.getRepository(Donation).find({
+            where: {
+                createdAt: Between(new Date(from), new Date(to))
+
+            }
+        });
     }
 
     async saveDonation(fromWalletId: number, toWalletId: number, amount: number, note: string) {
@@ -141,6 +150,20 @@ export class DatabaseService {
             amount,
             toWallet: toWalletId,
             note,
+        });
+    }
+
+    async getOneDonation(donationId: number, currentUserWalletId: number) {
+        console.log({
+            donationId,
+            currentUserWalletId
+        })
+        const dataSource = await getDatabaseConnection();
+        return await dataSource.getRepository(Donation).findOne({
+            where: {
+                id: donationId,
+                fromWallet: currentUserWalletId,
+            },
         });
     }
 }

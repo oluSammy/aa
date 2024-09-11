@@ -9,6 +9,8 @@ const donation = new Donation();
 const auth = new AuthController();
 
 router.post("/", [validationMiddleware(donationSchema)], auth.protectRoute, donation.donate);
-router.post("/", auth.protectRoute, donation.donate);
+router.get("/", auth.protectRoute, donation.getCurrentUserDonations);
+router.get("/:id", auth.protectRoute, donation.getOneDonation);
+router.get("/all", auth.protectRoute, donation.getAllDonations);
 
 export default router;

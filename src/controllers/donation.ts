@@ -26,6 +26,12 @@ export class Donation {
                 });
             }
 
+            if (fromWalletId.id === toWalletId) {
+                return res.status(status.BAD_REQUEST).json({
+                    message: "You cannot donate to yourself",
+                });
+            }
+
             const response = await dbService.transfer(fromWalletId.id, toWalletId, amount);
 
             if (!response.success) {
@@ -38,7 +44,7 @@ export class Donation {
 
             return res.status(status.OK).json({
                 message: "Donation successful",
-                balance: response.balance,
+                balance: response.balance
             });
         } catch (err) {
             console.log(err)
@@ -54,9 +60,41 @@ export class Donation {
             const wallet = await dbService.getWalletByUserId(user.id);
 
             const donations = await dbService.getDonationsByWalletId(wallet.id);
-
             return res.status(status.OK).json({
                 donations,
+            });
+        } catch (error) {
+            return res.status(status.INTERNAL_SERVER_ERROR).json({
+                message: "An error occurred",
+            });
+        }
+    }
+
+    async getAllDonations(req: IGetUserAuthInfoRequest, res: Response) {
+        try {
+            const { from, to } = req.query
+            const donations = await dbService.getAllDonations(from as string, to as string);
+            return res.status(status.OK).json({
+                donations,
+            });
+        } catch (error) {
+            return res.status(status.INTERNAL_SERVER_ERROR).json({
+                message: "An error occurred",
+            });
+        }
+    }
+
+    async getOneDonation(req: IGetUserAuthInfoRequest, res: Response) {
+        const donationId = req.params.id;
+
+
+        try {
+            const user = req.user.id;
+
+            const userWallet = await dbService.getWalletByUserId(user)
+            const donation = await dbService.getOneDonation(Number(donationId), userWallet.id);
+            return res.status(status.OK).json({
+                donation,
             });
         } catch (error) {
             return res.status(status.INTERNAL_SERVER_ERROR).json({
