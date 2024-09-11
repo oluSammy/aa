@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { User } from "../models/user";
 import { Wallet } from "../models/wallet";
+import { Donation } from "../models/donations";
 
 dotenv.config();
 

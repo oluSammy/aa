@@ -1,5 +1,11 @@
 import Joi from "joi";
 
+const pinValidation = Joi.string()
+  .length(4)
+  .pattern(/^[0-9]+$/)
+  .messages({ "string.pattern.base": `pin must have 4 digits.` })
+  .required()
+
 export const signupSchema = (signupData: Record<string, string>) => {
   const schema = Joi.object({
     firstName: Joi.string().alphanum().min(3).max(30).required(),
@@ -22,7 +28,7 @@ export const loginSchema = (loginData: Record<string, string>) => {
 
 export const walletPinSchema = (data: Record<string, string>) => {
   const schema = Joi.object({
-    pin: Joi.string().length(4).pattern(/^[0-9]+$/).messages({'string.pattern.base': `pin must have 4 digits.`}).required()
+    pin: pinValidation,
   });
 
   return schema.validate(data);
@@ -30,11 +36,20 @@ export const walletPinSchema = (data: Record<string, string>) => {
 
 export const fundWalletSchema = (data: Record<string, string>) => {
   const schema = Joi.object({
-    pin: Joi.string().length(4).pattern(/^[0-9]+$/).messages({'string.pattern.base': `pin must have 4 digits.`}).required(),
+    pin: pinValidation,
     amount: Joi.number().min(1).required(),
   });
 
   return schema.validate(data);
 };
 
+export const donationSchema = (data: Record<string, string>) => {
+  const schema = Joi.object({
+    toWalletId: Joi.number().required(),
+    amount: Joi.number().min(1).required(),
+    pin: pinValidation,
+    note: Joi.string().required(),
+  });
 
+  return schema.validate(data);
+};

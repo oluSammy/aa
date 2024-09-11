@@ -2,6 +2,7 @@ import { IsNull } from "typeorm";
 import { getDatabaseConnection } from "../../config/dbconfig";
 import { User } from "../../models/user";
 import { Wallet } from "../../models/wallet";
+import { Donation } from "../../models/donations";
 
 export class DatabaseService {
     async saveNewUser(email: string, password: string, firstName: string, lastName: string) {
@@ -69,7 +70,77 @@ export class DatabaseService {
 
     async getWalletByUserId(userId: number): Promise<Wallet> {
         const dataSource = await getDatabaseConnection();
-        const user = await dataSource.query(`SELECT * FROM wallet WHERE user_id = ${userId}`)
+        const user = await dataSource.query(`SELECT * FROM wallet WHERE user_id = ${userId}`);
         return user[0];
+    }
+
+    async transfer(fromAcctId: number, toWalletId: number, amount: number) {
+        const dataSource = await getDatabaseConnection();
+        const queryRunner = dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            const fromWallet = await queryRunner.manager.findOne(Wallet, {
+                where: {
+                    id: fromAcctId,
+                },
+            });
+
+            const toWallet = await queryRunner.manager.findOne(Wallet, {
+                where: {
+                    id: toWalletId,
+                },
+            });
+
+            if (!toWallet) {
+                await queryRunner.rollbackTransaction();
+                return {
+                    success: false,
+                    message: "Recipient wallet not found",
+                };
+            }
+
+            await queryRunner.manager.update(Wallet, fromAcctId, {
+                balance: fromWallet.balance - amount,
+            });
+
+            await queryRunner.manager.update(Wallet, toWalletId, {
+                balance: toWallet.balance + amount,
+            });
+
+            await queryRunner.commitTransaction();
+            return {
+                success: true,
+                balance: fromWallet.balance - amount,
+            };
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            return {
+                success: false,
+                message: "An error occurred",
+            };
+        } finally {
+            await queryRunner.release();
+        }
+    }
+
+    async getDonationsByWalletId(walletId: number) {
+        const dataSource = await getDatabaseConnection();
+        // return await dataSource.query(`SELECT * FROM donation WHERE from_wallet = ${walletId}`);
+        return await dataSource.getRepository(Donation).find({
+            where: {
+                fromWallet: walletId,
+            },
+        })
+    }
+
+    async saveDonation(fromWalletId: number, toWalletId: number, amount: number, note: string) {
+        const dataSource = await getDatabaseConnection();
+        return await dataSource.getRepository(Donation).save({
+            fromWallet: fromWalletId,
+            amount,
+            toWallet: toWalletId,
+            note,
+        });
     }
 }
