@@ -6,15 +6,27 @@
   "scripts": {
     "start": "node --inspect -r ts-node/register src/index.ts",
     "dev": "nodemon src/index.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "prettier": "npx prettier 'src/**/*.ts' --write",
+    "generate:migration": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/CreateUserTable -d ./src/config/dbconfig.ts",
+    "run:migration": "npx typeorm-ts-node-commonjs migration:run -d ./src/config/dbconfig.ts"
   },
   "author": "oluwaseun onabajo",
   "license": "ISC",
   "dependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.20.0",
+    "http-status": "^1.7.4",
     "joi": "^17.13.3",
     "mysql2": "^3.11.2",
+    "prettier": "^3.3.3",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
