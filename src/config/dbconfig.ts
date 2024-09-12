@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { DataSource } from "typeorm";
+import { CannotConnectAlreadyConnectedError, DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { User } from "../models/user";
 import { Wallet } from "../models/wallet";
@@ -22,9 +22,18 @@ const dbConnection = new DataSource({
 let instance: DataSource | null = null;
 
 export async function getDatabaseConnection(): Promise<DataSource> {
-  if (!instance || !instance.isInitialized) {
+  if (!instance) {
     instance = await dbConnection.initialize();
-    return instance;
+  } else if (!instance.isInitialized) {
+    try {
+      await instance.initialize();
+    } catch (error) {
+      if (error instanceof CannotConnectAlreadyConnectedError) {
+        console.log("DataSource is already connected. Using existing connection.");
+      } else {
+        throw error;
+      }
+    }
   } else {
     try {
       await instance.query("SELECT 1");
@@ -33,8 +42,7 @@ export async function getDatabaseConnection(): Promise<DataSource> {
       await instance.destroy();
       await instance.initialize();
     }
-    return instance;
   }
+  return instance;
 }
-
 export default dbConnection;

@@ -1,0 +1,63 @@
+config:
+  payload:
+    path: 'artileryData.csv'
+    order: sequence
+    fields:
+      - 'email'
+      - 'password'
+      - 'firstName'
+      - 'lastName'
+      - 'token'
+
+  target: http://localhost:3000/api
+  phases:
+    - duration: 30
+      arrivalCount: 1
+      # arrivalRate: 1
+      # rampTo: 5
+      name: warmup
+    # - duration: 60
+    #   arrivalRate: 5
+    #   rampTo: 7
+    #   name: Ramp Up
+    # - duration: 30
+    #   arrivalRate: 10
+    #   rampTo: 30
+    #   name: spike
+
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+scenarios:
+  - flow:
+      - loop:
+          - get:
+              url: '/donation/all?from=2024-09-11&to=2024-09-13&page=1&limit=5'
+              headers:
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+          # - get:
+          #     url: '/donation/3'
+          #     headers:
+          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+          - post:
+              url: '/auth/login'
+              json:
+                email: '{{ email }}'
+                password: '{{ password }}'
+              headers:
+                authorization: "Bearer '{{ token }}'"
+          # - put:
+          #     url: '/wallet/fund'
+          #     json:
+          #       pin: '2144'
+          #       amount: 40770.055
+          #     headers:
+          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+        count: 1

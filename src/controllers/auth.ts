@@ -44,6 +44,8 @@ export class AuthController {
     try {
       const { email, password } = req.body;
 
+      console.log({ email, password, token: req.headers.authorization.split(" ")[1] })
+
       // get user from db
       const user = await dbService.getUserByEmail(email);
 

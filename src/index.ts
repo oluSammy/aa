@@ -1,13 +1,16 @@
 import express, { Request, Response } from "express";
 import "reflect-metadata";
+import logger from "morgan"
 
 import dotenv from "dotenv";
 import routes from "./routes";
 
 dotenv.config();
 
+
 const app = express();
 const port = process.env.PORT;
+app.use(logger('combined'))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

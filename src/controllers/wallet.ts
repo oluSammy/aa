@@ -47,7 +47,6 @@ export class Wallet {
       });
     }
 
-
     const userWallet = await dbService.getWalletByUserId(user.id);
     const decryptedPin = bcrypt.compareSync(pin, userWallet.pin);
 

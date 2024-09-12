@@ -65,9 +65,13 @@ export class Donation {
     try {
       const user = req.user;
       const wallet = await dbService.getWalletByUserId(user.id);
-      const { page, limit } = req.query
+      const { page, limit } = req.query;
 
-      const donations = await dbService.getDonationsByWalletId(wallet.id, Number(page), Number(limit));
+      const donations = await dbService.getDonationsByWalletId(
+        wallet.id,
+        Number(page),
+        Number(limit)
+      );
       return res.status(status.OK).json({
         message: "current user's donations",
         ...donations,
@@ -82,12 +86,18 @@ export class Donation {
   async getAllDonations(req: IGetUserAuthInfoRequest, res: Response) {
     try {
       const { from, to, page, limit } = req.query;
-      const donations = await dbService.getAllDonations(from as string, to as string, Number(page), Number(limit));
+      console.log({ from, to, page, limit } )
+      const donations = await dbService.getAllDonations(
+        from as string,
+        to as string,
+        Number(page),
+        Number(limit)
+      );
       return res.status(status.OK).json({
         donations,
       });
     } catch (error) {
-        console.log(error, "...")
+      console.log(error, "...");
       return res.status(status.INTERNAL_SERVER_ERROR).json({
         message: "An error occurred...",
       });
