@@ -4,7 +4,7 @@ const pinValidation = Joi.string()
   .length(4)
   .pattern(/^[0-9]+$/)
   .messages({ "string.pattern.base": `pin must have 4 digits.` })
-  .required()
+  .required();
 
 export const signupSchema = (signupData: Record<string, string>) => {
   const schema = Joi.object({

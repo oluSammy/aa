@@ -1,28 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+} from "typeorm";
 import { Wallet } from "./wallet";
 
 @Entity()
 export class Donation {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(() => Wallet)
-    @JoinColumn()
-    fromWallet: number;
+  @ManyToOne(() => Wallet)
+  @JoinColumn()
+  fromWallet: number;
 
-    @ManyToOne(() => Wallet)
-    @JoinColumn()
-    toWallet: number;
+  @ManyToOne(() => Wallet)
+  @JoinColumn()
+  toWallet: number;
 
-    @Column()
-    amount: number;
+  @Column()
+  amount: number;
 
-    @Column()
-    note: string;
+  @Column()
+  note: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
