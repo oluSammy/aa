@@ -3,6 +3,7 @@ import { Response } from "express";
 import { IGetUserAuthInfoRequest } from "../types";
 import { DatabaseService } from "../services/database";
 import { verifyPin } from "../utils";
+import sendMail from "../utils/email";
 
 const dbService = new DatabaseService();
 
@@ -48,6 +49,21 @@ export class Donation {
       }
 
       await dbService.saveDonation(fromWalletId.id, toWalletId, amount, note);
+
+      const totalDonations = await dbService.getDonationsByWalletId(
+        fromWalletId.id,
+        Number(1),
+        Number(10)
+      );
+
+      if(totalDonations.total > 1) {
+        console.log(`The donator has made ${totalDonations.total} donations. So send a mail`)
+        const userData = await dbService.getUserById(user.id);
+        await sendMail(userData.firstName, userData.email)
+      }
+      else{
+        console.log(`The donator has made an initial ${totalDonations.total} donations. Don't send a mail`)
+      }
 
       return res.status(status.OK).json({
         message: "Donation successful",
