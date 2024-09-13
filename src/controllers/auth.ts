@@ -5,6 +5,8 @@ import { DatabaseService } from "../services/database";
 import { Wallet } from "./wallet";
 import jwt from "jsonwebtoken";
 import { IGetUserAuthInfoRequest } from "../types";
+import { rabbitMqChannel } from "../services/rabbitmq/producer";
+import { walletCreationQueue } from "../utils/constant";
 
 const dbService = new DatabaseService();
 
@@ -19,9 +21,11 @@ export class AuthController {
       // save user to db
       const user = await dbService.saveNewUser(email, hashedPassword, firstName, lastName);
 
-      // create new wallet for user
-      const wallet = new Wallet();
-      const mewWallet = await wallet.createWallet(user.id);
+      // send message to queue so that the wallet will be created
+      rabbitMqChannel.sendToQueue(
+        walletCreationQueue,
+        Buffer.from(JSON.stringify({ id: user.id, email: user.email, firstName: user.firstName }))
+      );
 
       res.status(status.CREATED).json({
         message: "User created successfully",
@@ -29,7 +33,7 @@ export class AuthController {
           firstName,
           lastName,
           email,
-          walletId: mewWallet.id,
+          // walletId: mewWallet.id,
         },
       });
     } catch (error) {
@@ -51,8 +55,6 @@ export class AuthController {
           message: "Invalid email or password",
         });
       }
-
-
 
       // compare password
       const isPasswordValid = bcrypt.compareSync(password, user.password);
@@ -86,6 +88,7 @@ export class AuthController {
   async protectRoute(req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) {
     try {
       let token: string | undefined;
+
       if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
       }
@@ -104,9 +107,8 @@ export class AuthController {
       next();
     } catch (err) {
       return res.status(status.UNAUTHORIZED).json({
-        message: "unauthorized"
-      })
+        message: "unauthorized",
+      });
     }
-
   }
 }

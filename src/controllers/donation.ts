@@ -4,6 +4,8 @@ import { IGetUserAuthInfoRequest } from "../types";
 import { DatabaseService } from "../services/database";
 import { verifyPin } from "../utils";
 import sendMail from "../utils/email";
+import { rabbitMqChannel } from "../services/rabbitmq/producer";
+import { donationQueue } from "../utils/constant";
 
 const dbService = new DatabaseService();
 
@@ -30,7 +32,7 @@ export class Donation {
 
       if (fromWalletId.balance < amount) {
         return res.status(status.BAD_REQUEST).json({
-          message: "Insufficient balance",
+          message: "Insufficient balance, please fund your wallet",
         });
       }
 
@@ -40,34 +42,23 @@ export class Donation {
         });
       }
 
-      const response = await dbService.transfer(fromWalletId.id, toWalletId, amount);
-
-      if (!response.success) {
-        return res.status(status.INTERNAL_SERVER_ERROR).json({
-          message: response.message,
-        });
-      }
-
-      await dbService.saveDonation(fromWalletId.id, toWalletId, amount, note);
-
-      const totalDonations = await dbService.getDonationsByWalletId(
-        fromWalletId.id,
-        Number(1),
-        Number(10)
+      rabbitMqChannel.sendToQueue(
+        donationQueue,
+        Buffer.from(
+          JSON.stringify({
+            fromWalletId: fromWalletId.id,
+            toWalletId: toWalletId,
+            amount,
+            userId: user.id,
+            email: user.email,
+            note,
+            userName: user.firstName
+          })
+        )
       );
-
-      if(totalDonations.total > 1) {
-        console.log(`The donator has made ${totalDonations.total} donations. So send a mail`)
-        const userData = await dbService.getUserById(user.id);
-        await sendMail(userData.firstName, userData.email)
-      }
-      else{
-        console.log(`The donator has made an initial ${totalDonations.total} donations. Don't send a mail`)
-      }
 
       return res.status(status.OK).json({
         message: "Donation successful",
-        balance: response.balance,
       });
     } catch (err) {
       console.log(err);
@@ -109,6 +100,9 @@ export class Donation {
         Number(page),
         Number(limit)
       );
+
+      console.log({ donations });
+
       return res.status(status.OK).json({
         donations,
       });

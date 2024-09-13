@@ -12,11 +12,12 @@ const dbConnection = new DataSource({
   host: "localhost",
   username: "root",
   password: "localhost",
-  database: 'fastmoni',
+  database: "fastmoni",
   entities: [User, Wallet, Donation],
   migrations: ["src/migrations/*.ts"],
   namingStrategy: new SnakeNamingStrategy(),
   port: 3306,
+  logging: true,
 });
 
 let instance: DataSource | null = null;

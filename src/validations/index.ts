@@ -43,6 +43,14 @@ export const fundWalletSchema = (data: Record<string, string>) => {
   return schema.validate(data);
 };
 
+export const createWalletSchema = (data: Record<string, string>) => {
+  const schema = Joi.object({
+    pin: pinValidation,
+  });
+
+  return schema.validate(data);
+};
+
 export const donationSchema = (data: Record<string, string>) => {
   const schema = Joi.object({
     toWalletId: Joi.number().required(),

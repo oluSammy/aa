@@ -132,17 +132,17 @@ export class DatabaseService {
     }
   }
 
-  async getDonationsByWalletId(walletId: number, page?: number, limit?: number) {
-    const response = await this.paginate<Donation>(
-      Donation,
-      {
-        fromWallet: walletId,
-      },
-      limit,
-      page
-    );
+  async getDonationsByWalletId(walletId: number, page: number = 1, limit: number = 10) {
+    const dataSource = await getDatabaseConnection();
+    const skip = (page - 1) * limit;
 
-    return response;
+    const currentData = await dataSource.query(`
+        SELECT * FROM donation WHERE from_wallet_id = ${walletId} LIMIT ${limit} OFFSET ${skip}
+      `);
+
+    return {
+      data: currentData,
+    };
   }
 
   /**
@@ -184,6 +184,8 @@ export class DatabaseService {
       });
     }
 
+    console.log({ query });
+
     const currentData = await queryBuilder
       .where({ ...query })
       .skip(skip)
@@ -207,7 +209,7 @@ export class DatabaseService {
         createdAt: Between(new Date(from), new Date(to)),
       },
       limit,
-      page,
+      page
     );
     // [
     //   ["entityAlias.fromWallet", "from_wallet_id"],

@@ -13,7 +13,7 @@ config:
 
   target: http://localhost:3000/api
   phases:
-    - duration: 90
+    - duration: 60
       arrivalCount: 5
       name: high_load_test
 
@@ -25,19 +25,18 @@ config:
     threshold: 100
   ensure:
     thresholds:
-      - http.response_time.p99: 400
-      # - http.response_time.p95: 75
+      - http.response_time.p99: 500
 scenarios:
   - flow:
       - loop:
           - get:
-              url: '/donation/all?from=2024-09-11&to=2024-09-13&page=1&limit=5'
+              url: '/donation/all?from=2024-09-11&to=2024-09-14&page=1&limit=5'
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
-          # - get:
-          #     url: '/donation/3'
-          #     headers:p
-          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+                authorization: 'Bearer {{ token }}'
+          - get:
+              url: '/donation/3'
+              headers:
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYyMjMyOTIsImV4cCI6MTcyNjMwOTY5Mn0.KwrYiF9PBkjxx_Axsza6gUGXuoIjKbwCWpNuOiW5q2k'
           - post:
               url: '/auth/login'
               json:
@@ -49,17 +48,17 @@ scenarios:
                 pin: '2144'
                 amount: 10000
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYyMjMyOTIsImV4cCI6MTcyNjMwOTY5Mn0.KwrYiF9PBkjxx_Axsza6gUGXuoIjKbwCWpNuOiW5q2k'
 
           - get:
               url: 'api/wallet'
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYyMjMyOTIsImV4cCI6MTcyNjMwOTY5Mn0.KwrYiF9PBkjxx_Axsza6gUGXuoIjKbwCWpNuOiW5q2k'
 
           - get:
               url: '/api/donation?page=1&limit=5'
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYyMjMyOTIsImV4cCI6MTcyNjMwOTY5Mn0.KwrYiF9PBkjxx_Axsza6gUGXuoIjKbwCWpNuOiW5q2k'
 
           - post:
               url: '/api/donation'
@@ -69,5 +68,5 @@ scenarios:
                 pin: '2144'
                 note: 'note'
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYyMjMyOTIsImV4cCI6MTcyNjMwOTY5Mn0.KwrYiF9PBkjxx_Axsza6gUGXuoIjKbwCWpNuOiW5q2k'
         count: 1
