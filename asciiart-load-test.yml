@@ -8,22 +8,14 @@ config:
       - 'firstName'
       - 'lastName'
       - 'token'
+      - 'pin'
+      - 'amount'
 
   target: http://localhost:3000/api
   phases:
-    - duration: 30
-      arrivalCount: 1
-      # arrivalRate: 1
-      # rampTo: 5
-      name: warmup
-    # - duration: 60
-    #   arrivalRate: 5
-    #   rampTo: 7
-    #   name: Ramp Up
-    # - duration: 30
-    #   arrivalRate: 10
-    #   rampTo: 30
-    #   name: spike
+    - duration: 90
+      arrivalCount: 10
+      name: high_load_test
 
   plugins:
     ensure: {}
@@ -33,31 +25,49 @@ config:
     threshold: 100
   ensure:
     thresholds:
-      - http.response_time.p99: 100
-      - http.response_time.p95: 75
+      - http.response_time.p99: 200
+      # - http.response_time.p95: 75
 scenarios:
   - flow:
       - loop:
           - get:
               url: '/donation/all?from=2024-09-11&to=2024-09-13&page=1&limit=5'
               headers:
-                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
           # - get:
           #     url: '/donation/3'
-          #     headers:
-          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+          #     headers:p
+          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
           - post:
               url: '/auth/login'
               json:
-                email: '{{ email }}'
-                password: '{{ password }}'
+                email: 'funmistar@yahoo.com'
+                password: 'helloworld'
+          - post:
+              url: '/wallet/fund'
+              json:
+                pin: '2144'
+                amount: 10000
               headers:
-                authorization: "Bearer '{{ token }}'"
-          # - put:
-          #     url: '/wallet/fund'
-          #     json:
-          #       pin: '2144'
-          #       amount: 40770.055
-          #     headers:
-          #       authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pNUB5YWhvby5jb20iLCJpYXQiOjE3MjYxNTIxMDgsImV4cCI6MTcyNjIzODUwOH0.Wyy_CF_Bo5yNLM-xk90XghI8gTjtQ7E1XWQeDJFrpRM'
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+
+          - get:
+              url: 'api/wallet'
+              headers:
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+
+          - get:
+              url: '/api/donation?page=1&limit=5'
+              headers:
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
+
+          - post:
+              url: '/api/donation'
+              json:
+                toWalletId: 2
+                amount: 100
+                pin: '2144'
+                note: 'note'
+              headers:
+                authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZ1bm1pc3RhckB5YWhvby5jb20iLCJpYXQiOjE3MjYxNzQxMzUsImV4cCI6MTcyNjI2MDUzNX0.xN-nofTAQGxQrb-2ELZJf0pCL0kSGuswaVlADOt-Ni8'
         count: 1

@@ -86,7 +86,7 @@ export class Donation {
   async getAllDonations(req: IGetUserAuthInfoRequest, res: Response) {
     try {
       const { from, to, page, limit } = req.query;
-      console.log({ from, to, page, limit } )
+      // console.log({ from, to, page, limit } )
       const donations = await dbService.getAllDonations(
         from as string,
         to as string,

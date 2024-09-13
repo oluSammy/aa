@@ -43,9 +43,6 @@ export class AuthController {
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
-
-      console.log({ email, password, token: req.headers.authorization.split(" ")[1] })
-
       // get user from db
       const user = await dbService.getUserByEmail(email);
 
@@ -54,6 +51,8 @@ export class AuthController {
           message: "Invalid email or password",
         });
       }
+
+
 
       // compare password
       const isPasswordValid = bcrypt.compareSync(password, user.password);
@@ -85,22 +84,29 @@ export class AuthController {
   }
 
   async protectRoute(req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) {
-    let token: string | undefined;
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    try {
+      let token: string | undefined;
+      if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+      }
 
-    if (!token) {
+      if (!token) {
+        return res.status(status.UNAUTHORIZED).json({
+          message: "unauthorized",
+        });
+      }
+
+      const decodedToken: any = jwt.verify(token as string, process.env.JWT_SECRET as string);
+
+      const user = await dbService.getUserByEmail(decodedToken.email);
+      req.user = user;
+
+      next();
+    } catch (err) {
       return res.status(status.UNAUTHORIZED).json({
-        message: "unauthorized",
-      });
+        message: "unauthorized"
+      })
     }
 
-    const decodedToken: any = jwt.verify(token as string, process.env.JWT_SECRET as string);
-
-    const user = await dbService.getUserByEmail(decodedToken.email);
-    req.user = user;
-
-    next();
   }
 }

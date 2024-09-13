@@ -11,6 +11,6 @@ const auth = new AuthController();
 
 router.get("/", auth.protectRoute, wallet.getWallet);
 router.put("/pin", [validationMiddleware(walletPinSchema)], auth.protectRoute, wallet.createPin);
-router.put("/fund", [validationMiddleware(fundWalletSchema)], auth.protectRoute, wallet.fundWallet);
+router.post("/fund", [validationMiddleware(fundWalletSchema)], auth.protectRoute, wallet.fundWallet);
 
 export default router;

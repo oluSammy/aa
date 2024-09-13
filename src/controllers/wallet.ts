@@ -41,6 +41,8 @@ export class Wallet {
     const user = req.user;
     const { amount, pin } = req.body;
 
+    console.log({ amount, pin })
+
     if (amount < 0) {
       return res.status(status.BAD_REQUEST).json({
         message: "Amount cannot be negative",

@@ -190,7 +190,7 @@ export class DatabaseService {
       .take(take)
       .getMany();
 
-    console.log(currentData);
+    // console.log(currentData);
 
     return {
       total, // The total number of records that match the query
