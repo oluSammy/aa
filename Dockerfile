@@ -13,7 +13,7 @@ RUN npm install
 
 COPY . .
 
-RUN ls
+RUN ls -a
 
 RUN npm run build
 
