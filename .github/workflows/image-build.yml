@@ -36,7 +36,7 @@ jobs:
           id: build-docker-image
           run: |
             ls -la 
-            docker build . -f Dockerfile -t olusammy/monie:v1 --build-arg port=3000
+            docker build . -f Dockerfile -t olusammy/monie:latest --build-arg port=3000
         - name: push the docker image
           id: push-docker-image
-          run: docker push olusammy/monie:v1
+          run: docker push olusammy/monie:latest

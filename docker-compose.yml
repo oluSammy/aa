@@ -14,14 +14,14 @@ services:
       - rabbitmq_nodejs
 
   api:
-    image: olusammy/monie:v1
+    image: olusammy/monie:latest
     restart: unless-stopped
     ports:
     - 3000:3000
     # command: npm run dv
     depends_on:
       - rabbitmq
-    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node consumer.js'
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node dist/src/index.js'
     networks:  # Add this section
       - rabbitmq_nodejs
 

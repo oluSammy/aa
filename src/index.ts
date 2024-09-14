@@ -4,8 +4,8 @@ import logger from "morgan";
 
 import dotenv from "dotenv";
 import routes from "./routes";
-// import { rabbitMqProducer } from "./services/rabbitmq/producer";
-// import { consumer } from "./services/rabbitmq/consumer";
+import { rabbitMqProducer } from "./services/rabbitmq/producer";
+import { consumer } from "./services/rabbitmq/consumer";
 
 dotenv.config();
 
@@ -24,5 +24,5 @@ app.get("/", (_: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
-// consumer(); 
-// rabbitMqProducer( )
+consumer();
+rabbitMqProducer()
