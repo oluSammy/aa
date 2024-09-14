@@ -26,6 +26,7 @@ ENV port $port
 WORKDIR /app
 
 COPY package*.json .
+COPY .env .
 
 RUN apk add --no-cache bash
 RUN wget -O /bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
