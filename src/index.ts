@@ -22,9 +22,8 @@ app.get("/", (_: Request, res: Response) => {
 });
 
 
-rabbitMqProducer().then(() => {
-  consumer();
-  app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-  });
-})
+app.listen(port, () => {
+  console.log(`[server]: Server is running at http://localhost:${port}`);
+});
+consumer();
+rabbitMqProducer()
