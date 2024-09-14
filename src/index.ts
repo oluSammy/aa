@@ -24,5 +24,11 @@ app.get("/", (_: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
-consumer();
-rabbitMqProducer()
+
+consumer().then(() => {
+  console.log("rabbit mq consumer")
+})
+
+rabbitMqProducer().then(() => {
+  console.log("rabbit mq producer")
+})
