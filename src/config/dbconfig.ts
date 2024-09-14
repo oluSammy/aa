@@ -16,7 +16,7 @@ const dbConnection = new DataSource({
   entities: [User, Wallet, Donation],
   migrations: ["src/migrations/*.ts"],
   namingStrategy: new SnakeNamingStrategy(),
-  port: Number(process.env.DB_PORT),
+  port: 16719,
   logging: true
 });
 
