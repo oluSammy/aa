@@ -3,6 +3,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json .
+COPY .env .
 
 RUN npm install
 # RUN npm rebuild bcrypt --build-from-source
