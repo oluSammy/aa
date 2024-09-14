@@ -1,6 +1,6 @@
 export const rabbitMqSettings = {
   protocol: "amqp",
-  hostname: "localhost",
+  hostname: "rabbitmq",
   port: 5672,
   username: "guest",
   password: "guest",
