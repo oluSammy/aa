@@ -17,6 +17,9 @@ RUN npm run build
 #Production stage
 FROM node:20-alpine AS production
 
+ARG port
+ENV port $port
+
 WORKDIR /app
 
 COPY package*.json .
