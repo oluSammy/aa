@@ -6,8 +6,8 @@ import { verifyPin } from "../utils";
 import sendMail from "../utils/email";
 import { rabbitMqChannel } from "../services/rabbitmq/producer";
 import { donationQueue } from "../utils/constant";
-
 const dbService = new DatabaseService();
+
 
 export class Donation {
   async donate(req: IGetUserAuthInfoRequest, res: Response) {
@@ -20,6 +20,7 @@ export class Donation {
           message: "Amount cannot be negative",
         });
       }
+
 
       const fromWalletId = await dbService.getWalletByUserId(user.id);
       const isValidPin = verifyPin(pin, fromWalletId.pin);
@@ -42,20 +43,56 @@ export class Donation {
         });
       }
 
-      rabbitMqChannel.sendToQueue(
-        donationQueue,
-        Buffer.from(
-          JSON.stringify({
-            fromWalletId: fromWalletId.id,
-            toWalletId: toWalletId,
-            amount,
-            userId: user.id,
-            email: user.email,
-            note,
-            userName: user.firstName
-          })
-        )
+      // rabbitMqChannel.sendToQueue(
+      //   donationQueue,
+      //   Buffer.from(
+      //     JSON.stringify({
+      //       fromWalletId: fromWalletId.id,
+      //       toWalletId: toWalletId,
+      //       amount,
+      //       userId: user.id,
+      //       email: user.email,
+      //       note,
+      //       userName: user.firstName
+      //     })
+      //   )
+      // );
+
+      const response = await dbService.transfer(fromWalletId.id, toWalletId, amount);
+      if (!response.success) {
+        return await sendMail(
+          user.firstName,
+          user.email,
+          "Donation Error",
+          `<strong>Donation of ${amount} to ${toWalletId} was not successful</strong>`,
+          "Please try again"
+        );
+      }
+      await dbService.saveDonation(fromWalletId.id, toWalletId, amount, note);
+      const totalDonations = await dbService.getDonationsByWalletId(
+        fromWalletId.id
       );
+
+      await sendMail(
+        user.firstName,
+        user.email,
+        "Donation Receipt",
+        "<strong>Donation of ${msg.amount} to ${msg.toWalletId} was not successful</strong>",
+        "Thank You"
+      );
+
+      if (totalDonations.data.length > 1) {
+        console.log(`The donator has made multiple donations. So send a mail`);
+        await sendMail(
+          user.firstName,
+          user.email,
+          "Appreciation",
+          "<strong>Thank you. We sincerely appreciate your kind gesture!</strong>",
+          "We sincerely appreciate your kind gesture"
+        );
+      } else {
+        console.log(`The donator has just made an initial donation. Don't send a mail`);
+      }
 
       return res.status(status.OK).json({
         message: "Donation successful",

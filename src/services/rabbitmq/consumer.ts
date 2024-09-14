@@ -19,8 +19,6 @@ export const consumer = async () => {
       // CREATE NEW WALLET
       const wallet = new Wallet();
       const mewWallet = await wallet.createWallet(msg.id);
-
-      console.log({ mewWallet });
       rabbitMqChannel.ack(message);
 
       await sendMail(
@@ -47,9 +45,6 @@ export const consumer = async () => {
   rabbitMqChannel.consume(donationQueue, async (message) => {
     try {
       const msg = JSON.parse(message.content.toString());
-      console.log({
-        message: msg
-      })
       const dbService = new DatabaseService()
       const response = await dbService.transfer(msg.fromWalletId, msg.toWalletId, msg.amount);
       if (!response.success) {

@@ -22,10 +22,14 @@ export class AuthController {
       const user = await dbService.saveNewUser(email, hashedPassword, firstName, lastName);
 
       // send message to queue so that the wallet will be created
-      rabbitMqChannel.sendToQueue(
-        walletCreationQueue,
-        Buffer.from(JSON.stringify({ id: user.id, email: user.email, firstName: user.firstName }))
-      );
+      // rabbitMqChannel.sendToQueue(
+      //   walletCreationQueue,
+      //   Buffer.from(JSON.stringify({ id: user.id, email: user.email, firstName: user.firstName }))
+      // );
+
+      // create a wallet
+      const wallet = new Wallet();
+      const mewWallet = await wallet.createWallet(user.id);
 
       res.status(status.CREATED).json({
         message: "User created successfully",
@@ -33,7 +37,7 @@ export class AuthController {
           firstName,
           lastName,
           email,
-          // walletId: mewWallet.id,
+          walletId: mewWallet.id,
         },
       });
     } catch (error) {
