@@ -15,11 +15,14 @@ services:
 
   api:
     image: olusammy/monie:latest
+    restart: unless-stopped
     ports:
     - 3000:3000
     # command: npm run dv
     depends_on:
       - rabbitmq
+    networks:  # Add this section
+      - rabbitmq_nodejs
 
 networks:
   rabbitmq_nodejs:
