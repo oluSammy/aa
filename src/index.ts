@@ -10,7 +10,7 @@ import { consumer } from "./services/rabbitmq/consumer";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = 3000;
 app.use(logger("combined"));
 
 app.use(express.json());
