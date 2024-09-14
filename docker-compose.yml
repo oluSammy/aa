@@ -18,6 +18,8 @@ services:
     ports:
     - 3000:3000
     command: npm run dv
+    depends_on:
+      - rabbitmq
 
 networks:
   rabbitmq_nodejs:
