@@ -32,6 +32,8 @@ jobs:
             envkey_MAIL_API_KEY: ${{ secrets.MAIL_API_KEY }}
             envkey_MAIL_SENTFROM: ${{ secrets.MAIL_SENTFROM }}
             envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+            envkey_JWT_SECRETE: ${{ secrets.JWT_SECRETE }}
+            
             file_name: .env
             fail_on_empty: false
             sort_keys: false
