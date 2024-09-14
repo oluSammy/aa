@@ -31,7 +31,7 @@ jobs:
             envkey_MAIL_API_KEY: ${{ secrets.MAIL_API_KEY }}
             envkey_MAIL_SENTFROM: ${{ secrets.MAIL_SENTFROM }}
             envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-
+ 
         - name: build the docker image
           id: build-docker-image
           run: |
