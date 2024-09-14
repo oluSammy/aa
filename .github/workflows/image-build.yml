@@ -15,7 +15,23 @@ jobs:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_PASSWORD}}
           run: |
-            docker login -u $username -p $password 
+            docker login -u $username -p $password
+
+        - name: Make envfile
+          uses: SpicyPizza/create-envfile@v2.0
+          with:
+            envkey_PORT: ${{ secrets.PORT }}
+            envkey_DB_NAME: ${{ secrets.DB_NAME }}
+            envkey_DB_HOST: ${{ secrets.DB_HOST }}
+            envkey_DB_PORTL: ${{ secrets.DB_PORTL }}
+            envkey_DB_USER: ${{ secrets.DB_USER }}
+            envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            envkey_JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+            envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            envkey_MAIL_API_KEY: ${{ secrets.MAIL_API_KEY }}
+            envkey_MAIL_SENTFROM: ${{ secrets.MAIL_SENTFROM }}
+            envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+
         - name: build the docker image
           id: build-docker-image
           run: |
