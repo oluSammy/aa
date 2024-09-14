@@ -17,13 +17,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api", routes);
 
-rabbitMqProducer();
-consumer();
-
 app.get("/", (_: Request, res: Response) => {
   res.send("Hello Fastmoni");
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+consumer();
+
+rabbitMqProducer().then(() => {
+  app.listen(port, () => {
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+  });
+})
