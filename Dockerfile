@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package*.json .
 COPY .env .
 
+RUN cat .env
+
 RUN npm install
 # RUN npm rebuild bcrypt --build-from-source
 
