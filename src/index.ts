@@ -15,15 +15,7 @@ app.use(logger("combined"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api", routes);
-
-console.log({
-  host: process.env.DB_HOST,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: 16719
-})
+app.use("/api", routes); 
 
 app.get("/", (_: Request, res: Response) => {
   res.send("Hello Fastmoni");
