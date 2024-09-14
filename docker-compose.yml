@@ -21,6 +21,7 @@ services:
     # command: npm run dv
     depends_on:
       - rabbitmq
+    command: sh -c '/bin/wait-for-it.sh rabbitmq:5672 --timeout=30 -- node consumer.js'
     networks:  # Add this section
       - rabbitmq_nodejs
 
