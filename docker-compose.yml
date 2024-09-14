@@ -14,12 +14,7 @@ services:
   #     - rabbitmq_nodejs
 
   api:
-    build:
-      context: .
-      target: build
-    volumes:
-    - ./:/app
-    - /app/node_modules
+    image: olusammy/monie:latest
     ports:
     - 3000:3000
     command: npm run dv
