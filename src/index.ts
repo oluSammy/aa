@@ -21,9 +21,8 @@ app.get("/", (_: Request, res: Response) => {
   res.send("Hello Fastmoni");
 });
 
-
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 // consumer(); 
-rabbitMqProducer()
+// rabbitMqProducer( )
