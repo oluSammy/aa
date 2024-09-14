@@ -1,0 +1,16 @@
+
+previews:
+  generation: automatic # Enable preview environments
+
+# List all services *except* PostgreSQL databases here
+services:
+  - type: web
+    runtime: docker
+    name: webdis
+    repo: https://github.com/render-examples/webdis.git # Default: Repo containing render.yaml
+    rootDir: webdis # Default: Repo root
+    dockerCommand: ./webdis.sh # Default: Dockerfile CMD
+    healthCheckPath: /
+    registryCredential: # Default: No credential
+      fromRegistryCreds:
+        name: my-credentials
