@@ -1,5 +1,5 @@
 import { DatabaseService } from "../services/database";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Response } from "express";
 import { IGetUserAuthInfoRequest } from "../types";
 import status from "http-status";

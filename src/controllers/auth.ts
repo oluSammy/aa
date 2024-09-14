@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import status from "http-status";
 import { DatabaseService } from "../services/database";
 import { Wallet } from "./wallet";

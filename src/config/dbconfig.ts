@@ -9,15 +9,15 @@ dotenv.config();
 
 const dbConnection = new DataSource({
   type: "mysql",
-  host: "localhost",
-  username: "root",
-  password: "localhost",
-  database: "fastmoni",
+  host: process.env.DB_HOST,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   entities: [User, Wallet, Donation],
   migrations: ["src/migrations/*.ts"],
   namingStrategy: new SnakeNamingStrategy(),
-  port: 3306,
-  logging: true,
+  port: Number(process.env.DB_PORT),
+  logging: true
 });
 
 let instance: DataSource | null = null;

@@ -13,7 +13,7 @@ config:
 
   target: http://localhost:3000/api
   phases:
-    - duration: 60
+    - duration: 40
       arrivalCount: 5
       name: high_load_test
 
