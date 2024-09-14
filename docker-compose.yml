@@ -14,7 +14,7 @@ services:
       - rabbitmq_nodejs
 
   api:
-    image: olusammy/monie:latest
+    image: olusammy/monie:v1
     restart: unless-stopped
     ports:
     - 3000:3000
@@ -26,5 +26,5 @@ services:
       - rabbitmq_nodejs
 
 networks:
-  rabbitmq_nodejs: 
+  rabbitmq_nodejs:
     driver: bridge

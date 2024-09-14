@@ -39,4 +39,4 @@ jobs:
             docker build . -f Dockerfile -t olusammy/monie:latest --build-arg port=3000
         - name: push the docker image
           id: push-docker-image
-          run: docker push olusammy/monie:latest
+          run: docker push olusammy/monie:v1
