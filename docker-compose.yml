@@ -17,7 +17,7 @@ services:
     image: olusammy/monie:latest
     ports:
     - 3000:3000
-    command: npm run dv
+    # command: npm run dv
     depends_on:
       - rabbitmq
 
