@@ -25,5 +25,5 @@ services:
       - rabbitmq_nodejs
 
 networks:
-  rabbitmq_nodejs:
+  rabbitmq_nodejs: 
     driver: bridge
