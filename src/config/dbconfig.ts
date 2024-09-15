@@ -4,6 +4,7 @@ import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { User } from "../models/user";
 import { Wallet } from "../models/wallet";
 import { Donation } from "../models/donations";
+import path from "path";
 
 dotenv.config();
 
@@ -14,10 +15,10 @@ const dbConnection = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [User, Wallet, Donation],
-  migrations: ["src/migrations/*.ts"],
+  migrations: [path.join(__dirname, '**', "src/migrations/*.{js}")],
   namingStrategy: new SnakeNamingStrategy(),
   port: 16719,
-  logging: true
+  logging: true,
 });
 
 let instance: DataSource | null = null;
