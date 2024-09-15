@@ -15,7 +15,7 @@ const dbConnection = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [User, Wallet, Donation],
-  migrations: [path.join(__dirname, '**', "src/migrations/*.{js}")],
+  migrations: [path.join(__dirname, "**", "src/migrations/*.{js}")],
   namingStrategy: new SnakeNamingStrategy(),
   port: 16719,
   logging: true,

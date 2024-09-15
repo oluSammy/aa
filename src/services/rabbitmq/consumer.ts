@@ -1,5 +1,10 @@
 import { Wallet } from "../../controllers/wallet";
-import { donationQueue, emailQueue, rabbitMqSettings, walletCreationQueue } from "../../utils/constant";
+import {
+  donationQueue,
+  emailQueue,
+  rabbitMqSettings,
+  walletCreationQueue,
+} from "../../utils/constant";
 // import { rabbitMqChannel } from "./producer"
 import amqp from "amqplib";
 import sendMail from "../../utils/email";
@@ -45,7 +50,7 @@ export const consumer = async () => {
   rabbitMqChannel.consume(donationQueue, async (message) => {
     try {
       const msg = JSON.parse(message.content.toString());
-      const dbService = new DatabaseService()
+      const dbService = new DatabaseService();
       const response = await dbService.transfer(msg.fromWalletId, msg.toWalletId, msg.amount);
       if (!response.success) {
         return await sendMail(
@@ -87,8 +92,7 @@ export const consumer = async () => {
       }
       rabbitMqChannel.ack(message);
     } catch (error) {
-      console.log("...", error)
+      console.log("...", error);
     }
-
   });
 };

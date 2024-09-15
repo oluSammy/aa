@@ -14,7 +14,10 @@ const sendMail = async (
     apiKey: process.env.MAIL_API_KEY,
   });
 
-  const sentFrom = new Sender("fastamoni@trial-jy7zpl9zvpo45vx6.mlsender.net", process.env.MAIL_USERNAME);
+  const sentFrom = new Sender(
+    "fastamoni@trial-jy7zpl9zvpo45vx6.mlsender.net",
+    process.env.MAIL_USERNAME
+  );
 
   const recipients = [new Recipient(emailId, username)];
 

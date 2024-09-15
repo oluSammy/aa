@@ -132,16 +132,23 @@ export class DatabaseService {
     }
   }
 
-  async getDonationsByWalletId(walletId: number, page: number = 1, limit: number = 10) {
+  async getDonationsByWalletId(walletId: number, page?: number, limit?: number) {
     const dataSource = await getDatabaseConnection();
-    const skip = (page - 1) * limit;
+    const RowsLimit = limit ? limit : 100
+    const currentPage = page ? page : 1
+    const skip = (currentPage - 1) * RowsLimit;
 
     const currentData = await dataSource.query(`
-        SELECT * FROM donation WHERE from_wallet_id = ${walletId} LIMIT ${limit} OFFSET ${skip}
-      `);
+      SELECT * FROM donation WHERE from_wallet_id = ${walletId} LIMIT ${RowsLimit} OFFSET ${skip}
+    `);
 
     return {
-      data: currentData,
+      data: currentData.map((donation) => {
+        return {
+          ...donation,
+          note: donation.note.split(":::")[0],
+        };
+      }),
     };
   }
 
@@ -174,7 +181,11 @@ export class DatabaseService {
     const skip = (currentPage - 1) * take;
 
     // Get the total number of records that match the query (without pagination)
-    const total = await dataSource.getRepository(model).count(query);
+    const total = await dataSource
+      .getRepository(model)
+      .createQueryBuilder("entity")
+      .where({ ...query })
+      .getCount();
 
     let queryBuilder = dataSource.getRepository(model).createQueryBuilder("entityAlias");
 
@@ -184,15 +195,11 @@ export class DatabaseService {
       });
     }
 
-    console.log({ query });
-
     const currentData = await queryBuilder
       .where({ ...query })
       .skip(skip)
       .take(take)
       .getMany();
-
-    // console.log(currentData);
 
     return {
       total, // The total number of records that match the query
@@ -202,64 +209,34 @@ export class DatabaseService {
     };
   }
 
-  async getAllDonations(from: string, to: string, page?: number, limit?: number) {
+  async getAllDonations(from?: string, to?: string, page?: number, limit?: number) {
+    const today = new Date(Date.now());
+    const month = `${today.getMonth() + 1}`.padStart(2, "0");
+    const day = `${today.getDate()}`.padStart(2, "0");
+
+    // set default startDate and endDate
+    const endDate = to ?? `${today.getFullYear()}-${month}-${day}`;
+    const startDate = from ?? "2024-08-09";
+
     const donations = await this.paginate(
       Donation,
       {
-        createdAt: Between(new Date(from), new Date(to)),
+        createdAt: Between(new Date(startDate), new Date(`${endDate} 23:59:59`)), //add 23:59:59 to query until the end of the day
       },
       limit,
       page
     );
-    // [
-    //   ["entityAlias.fromWallet", "from_wallet_id"],
-    //   ["entityAlias.toWallet", "to_wallet_id"],
-    // ]
 
-    // const allDonations = [];
-
-    // donations.data.forEach((donation) => {
-    //   allDonations.push({
-    //     donation: donation.amount,
-    //     note: donation.note,
-    //     id: donation.id,
-    //     fromWallet: donation.fromWallet,
-    //     toWallet: donation.toWallet,
-    //   });
-    // });
-
-    // const allWalletIds = [];
-    // allDonations.forEach((wallet) => {
-    //   allWalletIds.push(wallet.fromWallet.id);
-    //   allWalletIds.push(wallet.toWallet.id);
-    // });
-    // const uniqueWallets = [...new Set(allWalletIds)];
-    // const wallets = await this.getWalletsByWalletIds(uniqueWallets);
-
-    // const walletMap = wallets.reduce(
-    //   (acc, curr) => {
-    //     acc[curr.id] = curr.user;
-    //     return acc;
-    //   },
-    //   {} as Record<number, any>
-    // );
-
-    // console.log({ walletMap, allDonations });
-
-    // donations.data = allDonations.map((donation) => {
-    //   const fromUser = walletMap[donation.fromWallet.id];
-    //   const toUser = walletMap[donation.toWallet.id];
-
-    //   return {
-    //     ...donation,
-    //     fromUser: { email: fromUser.email, name: `${fromUser.firstName} ${fromUser.lastName}` },
-    //     toUser: { email: toUser.email, name: `${toUser.firstName} ${toUser.lastName}` },
-    //     fromWallet: donation.fromWallet.id,
-    //     toWallet: donation.toWallet.id,
-    //   };
-    // });
-
-    return donations;
+    const mappedData = donations.data.map((donation) => {
+      const currentNote = donation.note.split(":::");
+      return {
+        ...donation,
+        note: currentNote[0],
+        SenderWalletId: currentNote[1],
+        ReceiverWalletId: currentNote[2],
+      };
+    });
+    return { ...donations, data: mappedData };
   }
 
   async getWalletsByWalletIds(walletIds: number[]) {
@@ -278,21 +255,25 @@ export class DatabaseService {
       fromWallet: fromWalletId,
       amount,
       toWallet: toWalletId,
-      note,
+      note: `${note}:::${fromWalletId}:::${toWalletId}`,
     });
   }
 
   async getOneDonation(donationId: number, currentUserWalletId: number) {
-    console.log({
-      donationId,
-      currentUserWalletId,
-    });
     const dataSource = await getDatabaseConnection();
-    return await dataSource.getRepository(Donation).findOne({
+    const donation = await dataSource.getRepository(Donation).findOne({
       where: {
         id: donationId,
         fromWallet: currentUserWalletId,
       },
     });
+
+    const currentNote = donation.note.split(":::");
+    return {
+      ...donation,
+      note: currentNote[0],
+      SenderWalletId: currentNote[1],
+      ReceiverWalletId: currentNote[2],
+    };
   }
 }

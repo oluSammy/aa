@@ -8,7 +8,6 @@ import { rabbitMqChannel } from "../services/rabbitmq/producer";
 import { donationQueue } from "../utils/constant";
 const dbService = new DatabaseService();
 
-
 export class Donation {
   async donate(req: IGetUserAuthInfoRequest, res: Response) {
     try {
@@ -20,7 +19,6 @@ export class Donation {
           message: "Amount cannot be negative",
         });
       }
-
 
       const fromWalletId = await dbService.getWalletByUserId(user.id);
       const isValidPin = verifyPin(pin, fromWalletId.pin);
@@ -69,9 +67,7 @@ export class Donation {
         );
       }
       await dbService.saveDonation(fromWalletId.id, toWalletId, amount, note);
-      const totalDonations = await dbService.getDonationsByWalletId(
-        fromWalletId.id
-      );
+      const totalDonations = await dbService.getDonationsByWalletId(fromWalletId.id);
 
       await sendMail(
         user.firstName,
@@ -130,7 +126,6 @@ export class Donation {
   async getAllDonations(req: IGetUserAuthInfoRequest, res: Response) {
     try {
       const { from, to, page, limit } = req.query;
-      // console.log({ from, to, page, limit } )
       const donations = await dbService.getAllDonations(
         from as string,
         to as string,

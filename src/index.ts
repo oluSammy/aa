@@ -10,12 +10,12 @@ import routes from "./routes";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 app.use(logger("combined"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api", routes); 
+app.use("/api", routes);
 
 app.get("/", (_: Request, res: Response) => {
   res.send("Hello Fastmoni");

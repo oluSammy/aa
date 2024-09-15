@@ -1,5 +1,10 @@
 import amqp from "amqplib";
-import { donationQueue, emailQueue, rabbitMqSettings, walletCreationQueue } from "../../utils/constant";
+import {
+  donationQueue,
+  emailQueue,
+  rabbitMqSettings,
+  walletCreationQueue,
+} from "../../utils/constant";
 
 export let rabbitMqChannel;
 
