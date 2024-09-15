@@ -10,7 +10,7 @@ import routes from "./routes";
 dotenv.config();
 
 const app = express();
-
+const port = process.env.PORT || 3000
 app.use(logger("combined"));
 
 app.use(express.json());
@@ -21,7 +21,7 @@ app.get("/", (_: Request, res: Response) => {
   res.send("Hello Fastmoni");
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
